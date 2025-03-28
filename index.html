@@ -11,10 +11,10 @@
         #title-screen button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); }
         #game-screen { display: none; padding: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); margin: 40px auto; width: 90%; max-width: 800px; }
         #hangman-container { position: relative; height: 350px; margin-bottom: 40px; }
-        #hangman-platform { position: relative; width: 180px; height: 15px; background: linear-gradient(to bottom, #6a1b9a, #4a148c); border-radius: 8px 8px 0 0; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); margin: 30px auto; }
-        #hangman-platform::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 10px; height: 130px; background-color: #8B4513; }
-        #hangman-platform::after{content:'';position:absolute;top:145px;left:50%;transform:translateX(-50%);width:110px;height:10px;background-color:#8B4513;}
-        #hangman { position: absolute; top: 45px; left: 50%; transform: translateX(-50%); font-size: 1.5em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); color: #c23616; white-space: pre-wrap; }
+        #hangman-platform { position: relative; width: 200px; height: 20px; background: linear-gradient(to bottom, #8B4513, #654321); border-radius: 10px 10px 0 0; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); margin: 30px auto; }
+        #hangman-platform::before { content: ''; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 12px; height: 160px; background-color: #A0522D; }
+        #hangman-platform::after{content:'';position:absolute;top:180px;left:50%;transform:translateX(-50%);width:120px;height:12px;background-color:#A0522D;}
+        #hangman { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: 1.3em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); color: #c23616; white-space: pre-wrap; }
         #word-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 8px; animation: wordFadeIn 1.2s ease-out; color: #f9ca24; }
         #hint-display { font-style: italic; color: #81d4fa; margin-bottom: 25px; animation: hintFadeIn 1.2s ease-out; }
         #letter { padding: 14px; font-size: 1.3em; width: 70px; border: 2px solid #555; border-radius: 10px; background: rgba(255, 255, 255, 0.2); color: #e0f7fa; caret-color: yellow; animation: letterInputGlow 2.2s infinite ease-in-out; }
@@ -189,12 +189,12 @@
             const hangmanDiv = document.getElementById("hangman");
             const hangmanStages = [
                 "",
-                "  _____\n |     |\n |     O\n |      \n_|_____",
-                "  _____\n |     |\n |     O\n |     |\n_|_____",
-                "  _____\n |     |\n |     O\n |    /|\n_|_____",
-                "  _____\n |     |\n |     O\n |    /|\\\n_|_____",
-                "  _____\n |     |\n |     O\n |    /|\\\n_|___/ ",
-                "  _____\n |     |\n |     X\n |    /|\\\n_|___/ \\"
+                "  _____\n |    |\n |    O\n |     \n_|_____",
+                "  _____\n |    |\n |    O\n |    |\n_|_____",
+                "  _____\n |    |\n |    O\n |   /|\n_|_____",
+                "  _____\n |    |\n |    O\n |   /|\\\n_|_____",
+                "  _____\n |    |\n |    O\n |   /|\\\n_|___/ ",
+                "  _____\n |    |\n |    X\n |   /|\\\n_|___/ \\"
             ];
 
             hangmanDiv.textContent = hangmanStages[attempts];
