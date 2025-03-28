@@ -1,53 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Hangman</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Hangman</title>
     <style>
-        body { font-family: 'Courier New', monospace; text-align: center; background: linear-gradient(135deg, #1c2833, #283747); color: #ecf0f1; margin: 0; padding: 0; overflow: hidden; }
-        #title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; animation: fadeIn 2s ease-out; }
-        #title-screen h1 { font-size: 5.5em; margin-bottom: 10px; text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.7); letter-spacing: 12px; animation: pulse 2.2s infinite ease-in-out; color: #e67e22; }
-        #title-screen small { font-size: 1em; margin-bottom: 30px; color: #95a5a6; }
-        #title-screen button { padding: 22px 45px; font-size: 1.4em; background: linear-gradient(to right, #e74c3c, #c0392b); color: white; border: none; border-radius: 12px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); animation: buttonGlow 2.2s infinite ease-in-out; }
-        #title-screen button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); }
-        #game-screen { display: none; padding: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); margin: 40px auto; width: 90%; max-width: 800px; }
-        #hangman-container { position: relative; height: 400px; margin-bottom: 40px; }
-        #hangman { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: 1.2em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); color: #c23616; white-space: pre-wrap; }
-        #word-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 8px; animation: wordFadeIn 1.2s ease-out; color: #f9ca24; }
-        #hint-display { font-style: italic; color: #81d4fa; margin-bottom: 25px; animation: hintFadeIn 1.2s ease-out; }
-        #letter { padding: 14px; font-size: 1.3em; width: 70px; border: 2px solid #555; border-radius: 10px; background: rgba(255, 255, 255, 0.2); color: #e0f7fa; caret-color: yellow; animation: letterInputGlow 2.2s infinite ease-in-out; }
-        button { padding: 18px 35px; font-size: 1.3em; background: linear-gradient(to right, #2ecc71, #27ae60); color: white; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); animation: buttonGlow 2.2s infinite ease-in-out; }
-        button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
-        #wrong-guesses { color: #e74c3c; margin-top: 30px; font-weight: bold; font-size: 1.2em; animation: wrongGuessFadeIn 1.2s ease-out; }
-        .win-message {font-size:3em; color:red; font-weight:bold;}
-        .end-game-buttons button {padding: 18px 35px; font-size: 1.3em; border-radius: 10px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); margin: 10px;}
-        .end-game-buttons button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
-        .try-again {background: blue; color: white; border: none;}
-        .quit {background: red; color: white; border: none;}
-        #title-screen .hint-checkbox { margin-top: 20px; color: #81d4fa; }
-        #title-screen small.copyright { font-size: 0.9em; margin-top: 60px; }
-        .end-game-content{display:none;}
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-        @keyframes buttonGlow { 0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); } 50% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); } }
-        @keyframes slideIn { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes wordFadeIn, @keyframes hintFadeIn, @keyframes wrongGuessFadeIn, @keyframes resultFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes letterInputGlow { 0%, 100% { box-shadow: 0 0 12px rgba(255, 255, 0, 0.6); } 50% { box-shadow: 0 0 22px rgba(255, 255, 0, 0.9); } }
+        body {
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            background-color: black; 
+            color: #00FF00; /* Neon green */
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden;
+        }
+        #title-screen {
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            animation: fadeIn 2s ease-out;
+        }
+        #title-screen h1 {
+            font-size: 5.5em; 
+            margin-bottom: 10px; 
+            text-shadow: 0 0 20px #00FF00; /* Neon green glow */
+            letter-spacing: 12px; 
+            animation: pulse 2.2s infinite ease-in-out; 
+        }
+        #title-screen small {
+            font-size: 1em; 
+            margin-bottom: 30px; 
+            color: #66FF66; /* Lighter neon green */
+        }
+        #title-screen button {
+            padding: 22px 45px; 
+            font-size: 1.4em; 
+            background: linear-gradient(135deg, #00B300, #005700); /* Dark green */
+            color: #00FF00; /* Neon Green */
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: transform 0.35s ease, box-shadow 0.35s ease; 
+            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.5); 
+        }
+        #title-screen button:hover {
+            transform: translateY(-6px); 
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.7);
+        }
+        #game-screen {
+            display: none; 
+            padding: 50px; 
+            background: rgba(0, 0, 0, 0.8); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.5); 
+            margin: 40px auto; 
+            width: 90%; 
+            max-width: 800px; 
+        }
+        #hangman-container {
+            position: relative; 
+            height: 200px; 
+            margin-bottom: 40px; 
+        }
+        #hangman {
+            position: absolute; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            font-size: 0.7em; /* Smaller size for ASCII */
+            color: #00FF00; /* Neon Green */
+            white-space: pre-wrap; 
+        }
+        #word-display {
+            font-size: 3em; 
+            margin-bottom: 20px; 
+            letter-spacing: 8px; 
+        }
+        #hint-display {
+            font-style: italic; 
+            color: #66FF66; /* Lighter neon green */
+            margin-bottom: 25px; 
+        }
+        #letter {
+            padding: 10px; 
+            font-size: 1.3em; 
+            width: 70px; 
+            border: 2px solid #00FF00; 
+            border-radius: 10px; 
+            background: rgba(0, 0, 0, 0.5); 
+            color: #00FF00; /* Neon Green */
+            caret-color: yellow; 
+        }
+        button {
+            padding: 18px 35px; 
+            font-size: 1.3em; 
+            background: #005700; /* Dark green */
+            color: #00FF00; /* Neon Green */
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: transform 0.35s ease, box-shadow 0.35s ease; 
+            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.3);
+        }
+        button:hover { 
+            transform: translateY(-6px); 
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4); 
+        }
+        #wrong-guesses {
+            color: #00FF00; /* Neon Green */
+            margin-top: 30px; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+        }
+        .win-message {
+            font-size: 3em; 
+            color: red; 
+            font-weight: bold; 
+        }
+        .end-game-buttons button {
+            padding: 18px 35px; 
+            font-size: 1.3em; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: transform 0.35s ease, box-shadow 0.35s ease; 
+            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.3); 
+            margin: 10px;
+        }
+        .end-game-buttons button:hover {
+            transform: translateY(-6px); 
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4); 
+        }
+        .try-again { 
+            background: #007700; /* Darker green */
+            color: #00FF00; 
+            border: none; 
+        }
+        .quit { 
+            background: red; 
+            color: white; 
+            border: none; 
+        }
+        #title-screen small.copyright {
+            font-size: 0.9em; 
+            margin-top: 60px; 
+        }
+        .end-game-content {
+            display: none; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        @keyframes pulse { 
+            0%, 100% { transform: scale(1); } 
+            50% { transform: scale(1.06); } 
+        }
     </style>
 </head>
 <body>
     <div id="title-screen">
-        <h1>Hangman</h1>
+        <h1>Matrix Hangman</h1>
         <small>Developed by Jesse Johnson</small>
         <button onclick="startGame(1)">1 Player</button>
         <button onclick="startGame(2)">2 Players</button>
         <div class="hint-checkbox">
             <input type="checkbox" id="showHint" checked> Show Hint
         </div>
-        <small class="copyright"> 2025 Jesse Johnson. All Rights Reserved.</small>
+        <small class="copyright">2025 Jesse Johnson. All Rights Reserved.</small>
     </div>
     <div id="game-screen">
         <div id="hangman-container">
-            <div id="hangman"></div>
+            <pre id="hangman"></pre>
         </div>
         <div id="word-display"></div>
         <div id="hint-display"></div>
@@ -103,10 +228,10 @@
         }
 
         async function fetchBackupHint(word) {
-            try{
+            try {
                 const backupHintResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
                 const backupHintData = await backupHintResponse.json();
-                if(backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions){
+                if (backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions) {
                     return backupHintData[0].meanings[0].definitions[0].definition;
                 } else {
                     return "No backup hints available";
@@ -186,71 +311,76 @@
             const hangmanDiv = document.getElementById("hangman");
             const hangmanStages = [
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |               |
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   |
+ |___|
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |               O
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/|
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |              /O
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/ O
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |             /|O
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/ O
+  |  
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |             /|\\O
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/ O 
+  |  |
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |             /|\\O/
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/ O 
+  |  |
+ /   
 `,
                 `
-  +---------------+
-  |               |
-  |               |
-  |               |
-  |               |
-  |             /|\\O/\\
-  +---------------+
+ +---+
+ |   |
+ |   |
+ |   |
+ |   |
+ |   | 
+ |__/ O 
+  |  |
+ / \\
 `
             ];
             hangmanDiv.textContent = hangmanStages[attempts];
-            hangmanDiv.style.color = "green";
         }
 
         function endGame() {
@@ -261,7 +391,8 @@
             document.getElementById("hint-display").style.display = "none";
             document.querySelector(".end-game-buttons").innerHTML = `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
         }
-        function resetGame(){
+
+        function resetGame() {
             document.querySelector(".end-game-content").style.display = "none";
             document.getElementById("letter").style.display = "inline-block";
             document.querySelector("button").style.display = "inline-block";
