@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hangman - The Word Game: Solo & Duo</title>
+    <title>Hangman - Wordplay Challenge</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; text-align: center; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; }
+        body { font-family: 'Arial', sans-serif; text-align: center; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; }
         #title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; }
-        #title-screen h1 { font-size: 4em; margin-bottom: 30px; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3); letter-spacing: 5px; }
-        #title-screen button { padding: 18px 35px; font-size: 1.3em; background-color: #ff6f61; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease, transform 0.2s ease; margin: 10px; }
+        #title-screen h1 { font-size: 4em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); letter-spacing: 5px; }
+        #title-screen button { padding: 15px 30px; font-size: 1.2em; background-color: #ff6f61; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease, transform 0.2s ease; margin: 10px; }
         #title-screen button:hover { background-color: #e53935; transform: scale(1.05); }
-        #game-screen { display: none; padding: 30px; background-color: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 20px auto; width: 80%; max-width: 600px; }
-        #hangman { font-size: 3em; margin-bottom: 25px; color: #333; }
-        #guesses { margin-bottom: 15px; font-size: 1.2em; color: #555; }
-        #wrong-guesses { color: #e74c3c; margin-bottom: 15px; font-weight: bold; }
-        #letter { padding: 12px; font-size: 1.1em; width: 60px; border: 1px solid #ccc; border-radius: 5px; }
-        button { padding: 12px 25px; font-size: 1.1em; background-color: #2ecc71; color: white; border: none; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease; }
-        button:hover { background-color: #27ae60; }
-        #footer { margin-top: 40px; font-size: 1em; color: #777; }
-        .win-message { color: #2ecc71; font-weight: bold; }
-        .lose-message { color: #e74c3c; font-weight: bold; }
+        #game-screen { display: none; padding: 30px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 20px auto; width: 80%; max-width: 600px; }
+        #hangman-container { position: relative; height: 200px; margin-bottom: 20px; }
+        #hangman-platform { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 150px; height: 10px; background-color: #333; }
+        #hangman { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); font-size: 3em; }
+        #word-display { font-size: 2em; margin-bottom: 10px; }
+        #hint-display { font-style: italic; color: #777; margin-bottom: 20px; }
+        #letter { padding: 10px; font-size: 1em; width: 50px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; font-size: 1em; background-color: #4caf50; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; }
+        button:hover { background-color: #388e3c; }
+        #wrong-guesses { color: #d32f2f; margin-top: 20px; font-weight: bold; }
+        .win-message, .lose-message { font-weight: bold; font-size: 1.2em; }
     </style>
 </head>
 <body>
     <div id="title-screen">
-        <h1>Hangman</h1>
+        <h1>Hangman<br><small>Developed by Jesse Johnson</small></h1>
         <button onclick="startGame(1)">1 Player</button>
         <button onclick="startGame(2)">2 Players</button>
     </div>
     <div id="game-screen">
-        <div id="hangman"></div>
-        <div id="guesses"></div>
-        <div id="wrong-guesses"></div>
+        <div id="hangman-container">
+            <div id="hangman-platform"></div>
+            <div id="hangman"></div>
+        </div>
+        <div id="word-display"></div>
+        <div id="hint-display"></div>
         <input type="text" id="letter" maxlength="1">
         <button onclick="guessLetter()">Guess Letter</button>
-    </div>
-    <div id="footer">
-        Developed by Jesse Johnson | Copyright © 2025 | Enhanced Gameplay Edition
+        <div id="wrong-guesses"></div>
     </div>
 
     <script>
@@ -43,14 +45,25 @@
         let wrongGuesses = [];
         let attempts = 0;
         const maxAttempts = 7;
-        const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape"];
+        const words = {
+            "horse": "Animal",
+            "computer": "Electronic device",
+            "ocean": "Large body of water",
+            "chocolate": "Sweet treat",
+            "mountain": "Large natural elevation",
+            "butterfly": "Insect",
+            "guitar": "Musical instrument"
+        };
+        let hint = "";
 
         function startGame(players) {
             document.getElementById("title-screen").style.display = "none";
             document.getElementById("game-screen").style.display = "block";
 
             if (players === 1) {
-                word = words[Math.floor(Math.random() * words.length)];
+                const wordKeys = Object.keys(words);
+                word = wordKeys[Math.floor(Math.random() * wordKeys.length)];
+                hint = words[word];
             } else {
                 word = prompt("Player 1, enter a word (no spaces):").toLowerCase();
                 if (!word || word.includes(" ")) {
@@ -59,6 +72,7 @@
                     document.getElementById("game-screen").style.display = "none";
                     return;
                 }
+                hint = prompt("Enter a hint for Player 2:");
             }
 
             guessed = Array(word.length).fill("_");
@@ -81,23 +95,23 @@
                     }
                 }
                 if (!guessed.includes("_")) {
-                    document.getElementById("guesses").innerHTML += '<br><span class="win-message">Player 2 wins!</span>';
-                    setTimeout(() => startGame(0), 3000); // 0 is a placeholder to return to title screen.
+                    document.getElementById("word-display").innerHTML += '<br><span class="win-message">Player 2 wins!</span>';
+                    setTimeout(() => document.getElementById("title-screen").style.display = "flex", 3000);
                 }
             } else {
                 wrongGuesses.push(letter);
                 attempts++;
                 if (attempts >= maxAttempts) {
-                    document.getElementById("guesses").innerHTML += `<br><span class="lose-message">Player 1 wins! The word was: ${word}.</span>`;
-                    setTimeout(() => startGame(0), 3000);
+                    document.getElementById("word-display").innerHTML += `<br><span class="lose-message">Player 1 wins! The word was: ${word}.</span>`;
+                    setTimeout(() => document.getElementById("title-screen").style.display = "flex", 3000);
                 }
             }
             updateDisplay();
         }
 
         function updateDisplay() {
-            document.getElementById("hangman").textContent = guessed.join(" ");
-            document.getElementById("guesses").textContent = `Attempts: ${attempts}/${maxAttempts}`;
+            document.getElementById("word-display").textContent = guessed.join(" ");
+            document.getElementById("hint-display").textContent = `Hint: ${hint}`;
             document.getElementById("wrong-guesses").textContent = `Wrong Letters: ${wrongGuesses.join(", ")}`;
             drawHangman();
         }
@@ -115,7 +129,7 @@
                 case 6: hangman = "O<br>/|\\<br>/ \\"; break;
                 case 7: hangman = "💀"; break;
             }
-            hangmanDiv.innerHTML = guessed.join(" ") + "<br>" + hangman;
+            hangmanDiv.innerHTML = hangman;
         }
     </script>
 </body>
