@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hangman</title>
+    <style>
+        body { font-family: 'Consolas', monospace; text-align: center; background: linear-gradient(to bottom, #2c3e50, #34495e); color: #ecf0f1; margin: 0; padding: 0; }
+        #title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        #title-screen h1 { font-size: 5em; margin-bottom: 20px; text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5); letter-spacing: 10px; }
+        #title-screen small { font-size: 0.9em; margin-bottom: 30px; color: #95a5a6; }
+        #title-screen button { padding: 20px 40px; font-size: 1.3em; background: linear-gradient(to right, #e74c3c, #c0392b); color: white; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+        #title-screen button:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); }
+        #game-screen { display: none; padding: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); margin: 30px auto; width: 85%; max-width: 700px; }
+        #hangman-container { position: relative; height: 300px; margin-bottom: 30px; }
+        #hangman-platform { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 200px; height: 20px; background: linear-gradient(to bottom, #6a1b9a, #4a148c); border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); }
+        #hangman { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: 4em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        #word-display { font-size: 2.5em; margin-bottom: 15px; letter-spacing: 5px; }
+        #hint-display { font-style: italic; color: #95a5a6; margin-bottom: 25px; }
+        #letter { padding: 12px; font-size: 1.2em; width: 60px; border: 2px solid #555; border-radius: 8px; background: rgba(255, 255, 255, 0.2); color: #ecf0f1; }
+        button { padding: 15px 30px; font-size: 1.2em; background: linear-gradient(to right, #2ecc71, #27ae60); color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+        button:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); }
+        #wrong-guesses { color: #e74c3c; margin-top: 25px; font-weight: bold; font-size: 1.1em; }
+        .win-message, .lose-message { font-weight: bold; font-size: 1.3em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        #hint-checkbox { margin-top: 15px; color: #95a5a6; }
+    </style>
+</head>
+<body>
+    <div id="title-screen">
+        <h1>Hangman</h1>
+        <small>Developed by Jesse Johnson</small>
+        <button onclick="startGame(1)">1 Player Challenge</button>
+        <button onclick="startGame(2)">2 Player Duel</button>
+    </div>
+    <div id="game-screen">
+        <div id="hangman-container">
+            <div id="hangman-platform"></div>
+            <div id="hangman"></div>
+        </div>
+        <div id="word-display"></div>
+        <div id="hint-display"></div>
+        <input type="text" id="letter" maxlength="1">
+        <button onclick="guessLetter()">Decipher Letter</button>
+        <div id="wrong-guesses"></div>
+        <div id="hint-checkbox">
+            <input type="checkbox" id="showHint" checked> Reveal Clue
+        </div>
+    </div>
+
+    <script>
+        let word = "";
+        let guessed = [];
+        let wrongGuesses = [];
+        let attempts = 0;
+        const maxAttempts = 8;
+        const words = {
+            "cryptography": "The art of secret writing.",
+            "algorithm": "A process or set of rules to be followed in calculations.",
+            "paradox": "A seemingly absurd or self-contradictory statement.",
+            "quantum": "Relating to quantum mechanics.",
+            "nebula": "A cloud of gas and dust in outer space.",
+            "zenith": "The time at which something is most powerful.",
+            "ephemeral": "Lasting for a very short time."
+        };
+        let hint = "";
+        let usedHints = 0;
+
+        function startGame(players) {
+            document.getElementById("title-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+
+            if (players === 1) {
+                const wordKeys = Object.keys(words);
+                word = wordKeys[Math.floor(Math.random() * wordKeys.length)];
+                hint = words[word];
+            } else {
+                word = prompt("Player 1, input the word for the duel (no spaces):").toLowerCase();
+                if (!word || word.includes(" ")) {
+                    alert("Invalid input. Please enter a word without spaces.");
+                    document.getElementById("title-screen").style.display = "flex";
+                    document.getElementById("game-screen").style.display = "none";
+                    return;
+                }
+                hint = prompt("Provide a cryptic clue for Player 2:");
+            }
+
+            guessed = Array(word.length).fill("_");
+            wrongGuesses = [];
+            attempts = 0;
+            usedHints = 0;
+            updateDisplay();
+        }
+
+        function guessLetter() {
+            const letterInput = document.getElementById("letter");
+            const letter = letterInput.value.toLowerCase();
+            letterInput.value = "";
+
+            if (!letter || wrongGuesses.includes(letter) || guessed.includes(letter) || !/^[a-z]$/.test(letter)) return;
+
+            if (word.includes(letter)) {
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) {
+                        guessed[i] = letter;
+                    }
+                }
+                if (!guessed.includes("_")) {
+                    const continueGame = confirm("Victory Achieved! Engage in another round?");
+                    if (continueGame) {
+                        document.getElementById("title-screen").style.display = "flex";
+                        document.getElementById("game-screen").style.display = "none";
+                    } else {
+                        window.close();
+                    }
+                }
+            } else {
+                wrongGuesses.push(letter);
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    const continueGame = confirm(`Decipherment Failed! The word was: ${word}. Attempt another round?`);
+                    if (continueGame) {
+                        document.getElementById("title-screen").style.display = "flex";
+                        document.getElementById("game-screen").style.display = "none";
+                    } else {
+                        window.close();
+                    }
+                }
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById("word-display").textContent = guessed.join(" ");
+            document.getElementById("hint-display").textContent = document.getElementById("showHint").checked ? `Clue: ${hint}` : "";
+            document.getElementById("wrong-guesses").textContent = `Incorrect Attempts: ${wrongGuesses.join(", ")}`;
+            drawHangman();
+        }
+
+        function drawHangman() {
+            const hangmanDiv = document.getElementById("hangman");
+            let hangman = "";
+
+            switch (attempts) {
+                case 1: hangman = "O"; break;
+                case 2: hangman = "O<br>|"; break;
+                case 3: hangman = "O<br>|\\"; break;
+                case 4: hangman = "O<br>/|\\"; break;
+                case 5: hangman = "O<br>/|\\<br>/"; break;
+                case 6: hangman = "O<br>/|\\<br>/ \\"; break;
+                case 7: hangman = "O<br>/|\\<br>/ \\<br>|"; break;
+                case 8: hangman = "💀"; break;
+            }
+            hangmanDiv.innerHTML = hangman;
+        }
+
+    </script>
+</body>
+</html>
