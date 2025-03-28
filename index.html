@@ -5,7 +5,7 @@
     <style>
         body { font-family: 'Courier New', monospace; text-align: center; background: linear-gradient(135deg, #1c2833, #283747); color: #ecf0f1; margin: 0; padding: 0; overflow: hidden; }
         #title-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; animation: fadeIn 2s ease-out; }
-        #title-screen h1 { font-size: 5.5em; margin-bottom: 10px; text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.7); letter-spacing: 12px; animation: pulse 2.2s infinite ease-in-out; color:#e67e22; }
+        #title-screen h1 { font-size: 1.5em; /* Adjust font size for ASCII art */ margin-bottom: 10px; text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.7); letter-spacing: 1px; animation: pulse 2.2s infinite ease-in-out; color: #e67e22; white-space: pre-wrap; }
         #title-screen small { font-size: 1em; margin-bottom: 30px; color: #95a5a6; }
         #title-screen button { padding: 22px 45px; font-size: 1.4em; background: linear-gradient(to right, #e74c3c, #c0392b); color: white; border: none; border-radius: 12px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); animation: buttonGlow 2.2s infinite ease-in-out; }
         #title-screen button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); }
@@ -13,7 +13,7 @@
         #hangman-container { position: relative; height: 350px; margin-bottom: 40px; }
         #hangman-platform { position: relative; width: 200px; height: 20px; background: linear-gradient(to bottom, #8B4513, #654321); border-radius: 10px 10px 0 0; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); margin: 30px auto; }
         #hangman-platform::before { content: ''; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 12px; height: 160px; background-color: #A0522D; }
-        #hangman-platform::after{content:'';position:absolute;top:180px;left:50%;transform:translateX(-50%);width:120px;height:12px;background-color:#A0522D;}
+        #hangman-platform::after { content: ''; position: absolute; top: 180px; left: 50%; transform: translateX(-50%); width: 120px; height: 12px; background-color: #A0522D; }
         #hangman { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: 1.2em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); color: #c23616; white-space: pre-wrap; }
         #word-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 8px; animation: wordFadeIn 1.2s ease-out; color: #f9ca24; }
         #hint-display { font-style: italic; color: #81d4fa; margin-bottom: 25px; animation: hintFadeIn 1.2s ease-out; }
@@ -21,14 +21,14 @@
         button { padding: 18px 35px; font-size: 1.3em; background: linear-gradient(to right, #2ecc71, #27ae60); color: white; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); animation: buttonGlow 2.2s infinite ease-in-out; }
         button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
         #wrong-guesses { color: #e74c3c; margin-top: 30px; font-weight: bold; font-size: 1.2em; animation: wrongGuessFadeIn 1.2s ease-out; }
-        .win-message {font-size:3em; color:red; font-weight:bold;}
-        .end-game-buttons button {padding: 18px 35px; font-size: 1.3em; border-radius: 10px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); margin: 10px;}
+        .win-message { font-size: 3em; color: red; font-weight: bold; }
+        .end-game-buttons button { padding: 18px 35px; font-size: 1.3em; border-radius: 10px; cursor: pointer; transition: transform 0.35s ease, box-shadow 0.35s ease; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); margin: 10px; }
         .end-game-buttons button:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
-        .try-again {background: blue; color: white; border: none;}
-        .quit {background: red; color: white; border: none;}
+        .try-again { background: blue; color: white; border: none; }
+        .quit { background: red; color: white; border: none; }
         #title-screen .hint-checkbox { margin-top: 20px; color: #81d4fa; }
         #title-screen small.copyright { font-size: 0.9em; margin-top: 60px; }
-        .end-game-content{display:none;}
+        .end-game-content { display: none; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         @keyframes buttonGlow { 0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); } 50% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); } }
@@ -39,7 +39,13 @@
 </head>
 <body>
     <div id="title-screen">
-        <h1>Hangman</h1>
+        <h1>
+            H   H AAAAA N   N GGGGG M   M AAAAA N   N<br>
+            H   H A   A NN  N G     MM MM A   A NN  N<br>
+            HHHHH AAAAA N N N G GGG M M M AAAAA N N N<br>
+            H   H A   A N  NN G   G M   M A   A N  NN<br>
+            H   H A   A N   N GGGGG M   M A   A N   N
+        </h1>
         <small>Developed by Jesse Johnson</small>
         <button onclick="startGame(1)">1 Player</button>
         <button onclick="startGame(2)">2 Players</button>
@@ -107,10 +113,10 @@
         }
 
         async function fetchBackupHint(word) {
-            try{
+            try {
                 const backupHintResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
                 const backupHintData = await backupHintResponse.json();
-                if(backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions){
+                if (backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions) {
                     return backupHintData[0].meanings[0].definitions[0].definition;
                 } else {
                     return "No backup hints available";
@@ -148,6 +154,7 @@
             wrongGuesses = [];
             attempts = 0;
             updateDisplay();
+            drawHangman(); // Draw the platform initially
         }
 
         function guessLetter() {
@@ -170,7 +177,7 @@
             } else {
                 wrongGuesses.push(letter);
                 attempts++;
-                drawHangman();
+                drawHangman(); // Draw the hangman part on wrong guess
                 if (attempts >= maxAttempts) {
                     document.querySelector(".win-message").textContent = "HANGED!";
                     endGame();
@@ -207,7 +214,7 @@
             document.getElementById("hint-display").style.display = "none";
             document.querySelector(".end-game-buttons").innerHTML = `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
         }
-        function resetGame(){
+        function resetGame() {
             document.querySelector(".end-game-content").style.display = "none";
             document.getElementById("letter").style.display = "inline-block";
             document.querySelector("button").style.display = "inline-block";
