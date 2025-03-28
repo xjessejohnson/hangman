@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hangman Game</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; }
+        #hangman { font-size: 2em; }
+        #guesses { margin-top: 20px; }
+        #wrong-guesses { margin-top: 10px; color: red; }
+    </style>
+</head>
+<body>
+    <h1>Hangman</h1>
+    <div id="hangman"></div>
+    <div id="guesses"></div>
+    <div id="wrong-guesses"></div>
+    <input type="text" id="letter" maxlength="1">
+    <button onclick="guessLetter()">Guess</button>
+
+    <script>
+        let word = "";
+        let guessed = [];
+        let wrongGuesses = [];
+        let attempts = 0;
+
+        async function startGame() {
+            word = prompt("Player 1, enter a word:");
+            if (!word) return;
+
+            guessed = Array(word.length).fill("_");
+            updateDisplay();
+        }
+
+        function guessLetter() {
+            const letterInput = document.getElementById("letter");
+            const letter = letterInput.value.toLowerCase();
+            letterInput.value = "";
+
+            if (!letter || wrongGuesses.includes(letter) || guessed.includes(letter)) return;
+
+            if (word.includes(letter)) {
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) {
+                        guessed[i] = letter;
+                    }
+                }
+                if (!guessed.includes("_")) {
+                    alert("Player 2 wins!");
+                    startGame();
+                }
+            } else {
+                wrongGuesses.push(letter);
+                attempts++;
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById("hangman").textContent = guessed.join(" ");
+            document.getElementById("guesses").textContent = `Attempts: ${attempts}`;
+            document.getElementById("wrong-guesses").textContent = `Wrong: ${wrongGuesses.join(", ")}`;
+            drawHangman();
+        }
+
+        function drawHangman() {
+            const hangmanDiv = document.getElementById("hangman");
+            let hangman = "";
+
+            switch (attempts) {
+                case 1: hangman = "O"; break;
+                case 2: hangman = "O\n|"; break;
+                case 3: hangman = "O\n|\\"; break;
+                case 4: hangman = "O\n/|\\"; break;
+                case 5: hangman = "O\n/|\\\n/"; break;
+                case 6: hangman = "O\n/|\\\n/ \\"; alert("Player 1 wins!"); startGame(); break;
+            }
+            hangmanDiv.innerHTML = guessed.join(" ") + "<br>" + hangman;
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
