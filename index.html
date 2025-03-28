@@ -14,7 +14,7 @@
         #hangman-platform { position: relative; width: 180px; height: 15px; background: linear-gradient(to bottom, #6a1b9a, #4a148c); border-radius: 8px 8px 0 0; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); margin: 30px auto; }
         #hangman-platform::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 10px; height: 130px; background-color: #8B4513; }
         #hangman-platform::after{content:'';position:absolute;top:145px;left:50%;transform:translateX(-50%);width:110px;height:10px;background-color:#8B4513;}
-        #hangman { position: absolute; top: 45px; left: 50%; transform: translateX(-50%); font-size: 4.5em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); animation: hangmanSwing 2.2s infinite ease-in-out; color: #c23616; }
+        #hangman { position: absolute; top: 45px; left: 50%; transform: translateX(-50%); font-size: 1.5em; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); color: #c23616; white-space: pre-wrap; }
         #word-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 8px; animation: wordFadeIn 1.2s ease-out; color: #f9ca24; }
         #hint-display { font-style: italic; color: #81d4fa; margin-bottom: 25px; animation: hintFadeIn 1.2s ease-out; }
         #letter { padding: 14px; font-size: 1.3em; width: 70px; border: 2px solid #555; border-radius: 10px; background: rgba(255, 255, 255, 0.2); color: #e0f7fa; caret-color: yellow; animation: letterInputGlow 2.2s infinite ease-in-out; }
@@ -33,7 +33,6 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         @keyframes buttonGlow { 0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); } 50% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); } }
         @keyframes slideIn { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes hangmanSwing { 0%, 100% { transform: translate(-50%, 0) rotate(0deg); } 50% { transform: translate(-50%, -6px) rotate(3.5deg); } }
         @keyframes wordFadeIn, @keyframes hintFadeIn, @keyframes wrongGuessFadeIn, @keyframes resultFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes letterInputGlow { 0%, 100% { box-shadow: 0 0 12px rgba(255, 255, 0, 0.6); } 50% { box-shadow: 0 0 22px rgba(255, 255, 0, 0.9); } }
     </style>
@@ -66,9 +65,6 @@
     </div>
 
     <script>
-        // Proprietary Code - Do not distribute or copy without written consent from Jesse Johnson.
-        // This code contains intellectual property belonging to Jesse Johnson.
-        // Unauthorized use or reproduction is strictly prohibited.
         let word = "";
         let guessed = [];
         let wrongGuesses = [];
@@ -100,7 +96,7 @@
 
         async function fetchBackupWordAndHint() {
             try {
-                const backupWords = ["abacus", "banjo", "crypt", "dwarf", "exodus", "fjord", "gazebo", "hammock", "igloo", "jigsaw", "kayak", "lymph", "matrix", "nymph", "oxygen", "puzzle", "quartz", "rhythm", "sphinx", "twelfth", "unzip", "vodka", "waltz", "xylophone", "yacht", "zeppelin"];
+                const backupWords = ["python", "programming", "algorithm", "hangman", "computer", "developer", "function", "variable", "iteration", "recursion"];
                 const randomWord = backupWords[Math.floor(Math.random() * backupWords.length)];
                 hint = await fetchBackupHint(randomWord);
                 return randomWord;
@@ -191,17 +187,17 @@
 
         function drawHangman() {
             const hangmanDiv = document.getElementById("hangman");
-            let hangman = "";
+            const hangmanStages = [
+                "",
+                "  _____\n |     |\n |     O\n |      \n_|_____",
+                "  _____\n |     |\n |     O\n |     |\n_|_____",
+                "  _____\n |     |\n |     O\n |    /|\n_|_____",
+                "  _____\n |     |\n |     O\n |    /|\\\n_|_____",
+                "  _____\n |     |\n |     O\n |    /|\\\n_|___/ ",
+                "  _____\n |     |\n |     X\n |    /|\\\n_|___/ \\"
+            ];
 
-            switch (attempts) {
-                case 1: hangman = "O"; break;
-                case 2: hangman = "O<br>|"; break;
-                case 3: hangman = "O<br>|\\"; break;
-                case 4: hangman = "O<br>/|\\"; break;
-                case 5: hangman = "O<br>/|\\<br>/"; break;
-                case 6: hangman = "O<br>/|\\<br>/ \\"; break;
-            }
-            hangmanDiv.innerHTML = hangman;
+            hangmanDiv.textContent = hangmanStages[attempts];
         }
 
         function endGame() {
