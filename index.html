@@ -12,7 +12,7 @@
             color: #00FF00;
             margin: 0;
             padding: 0;
-            overflow: auto; /* Changed from hidden to auto */
+            overflow: auto;
         }
         #title-screen {
             display: flex;
@@ -61,14 +61,14 @@
         }
         #hangman-container {
             position: relative;
-            height: 200px;
+            height: 400px; /* Increased size */
             margin-bottom: 40px;
         }
         #hangman {
             position: absolute;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) scale(2); /* Increased size */
             font-size: 0.7em;
             color: #00FF00;
             white-space: pre-wrap;
@@ -168,7 +168,7 @@
         <div class="hint-checkbox">
             <input type="checkbox" id="showHint" checked> Show Hint
         </div>
-        <small class="copyright">2025 Jesse Johnson. All Rights Reserved.</small>
+        <small class="copyright">© 2025 Jesse Johnson. All Rights Reserved.</small>
     </div>
     <div id="game-screen">
         <div id="hangman-container">
@@ -190,7 +190,7 @@
         let guessed = [];
         let wrongGuesses = [];
         let attempts = 0;
-        const maxAttempts = 7; // Adjusted to match hangman stages
+        const maxAttempts = 6; // Adjusted to match hangman stages
         let hint = "";
         let showHint = true;
 
@@ -287,7 +287,7 @@
                 }
                 if (!guessed.includes("_")) {
                     document.querySelector(".win-message").textContent = "Congratulations! You won!";
-                    endGame();
+                    endGame(true);
                 }
             } else {
                 wrongGuesses.push(letter);
@@ -295,7 +295,7 @@
                 drawHangman();
                 if (attempts >= maxAttempts) {
                     document.querySelector(".win-message").textContent = "HANGED!";
-                    endGame();
+                    endGame(false);
                 }
             }
             updateDisplay();
@@ -370,13 +370,13 @@
             hangmanDiv.textContent = hangmanStages[attempts];
         }
 
-        function endGame() {
+        function endGame(win) {
             document.querySelector(".end-game-content").style.display = "block";
             document.getElementById("letter").style.display = "none";
             document.querySelector("button").style.display = "none";
             document.getElementById("wrong-guesses").style.display = "none";
             document.getElementById("hint-display").style.display = "none";
-            document.querySelector(".end-game-buttons").innerHTML = `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
+            document.querySelector(".end-game-buttons").innerHTML = win ? `<button class="try-again" onclick="resetGame()">Play Again?</button><button class="quit" onclick="window.close()">Quit</button>` : `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
         }
 
         function resetGame() {
