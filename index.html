@@ -61,14 +61,14 @@
         }
         #hangman-container {
             position: relative;
-            height: 800px; /* Increased size */
-            margin-bottom: 20px; /* Adjusted margin */
+            height: 800px;
+            margin-bottom: 20px;
         }
         #hangman {
             position: absolute;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%) scale(4); /* Increased size */
+            transform: translateX(-50%) scale(4);
             font-size: 0.7em;
             color: #00FF00;
             white-space: pre-wrap;
@@ -92,7 +92,7 @@
             background: rgba(0, 0, 0, 0.5);
             color: #00FF00;
             caret-color: yellow;
-            margin-top: 10px; /* Adjusted margin */
+            margin-top: 10px;
         }
         button {
             padding: 18px 35px;
@@ -187,7 +187,207 @@
     </div>
 
     <script>
-        // ... (JavaScript code remains the same)
+        let word = "";
+        let guessed = [];
+        let wrongGuesses = [];
+        let attempts = 0;
+        const maxAttempts = 6;
+        let hint = "";
+        let showHint = true;
+
+        async function fetchWordAndHint() {
+            try {
+                const response = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+                const data = await response.json();
+                const randomWord = data[0];
+
+                const hintResponse = await fetch(`https://api.datamuse.com/words?ml=${randomWord}`);
+                const hintData = await hintResponse.json();
+                if (hintData.length > 0) {
+                    hint = hintData[0].word;
+                } else {
+                    hint = await fetchBackupHint(randomWord);
+                }
+
+                return randomWord;
+            } catch (error) {
+                console.error("Error fetching word and hint:", error);
+                return await fetchBackupWordAndHint();
+            }
+        }
+
+        async function fetchBackupWordAndHint() {
+            try {
+                const backupWords = ["python", "programming", "algorithm", "hangman", "computer", "developer", "function", "variable", "iteration", "recursion"];
+                const randomWord = backupWords[Math.floor(Math.random() * backupWords.length)];
+                hint = await fetchBackupHint(randomWord);
+                return randomWord;
+            } catch (error) {
+                console.error("Backup word fetch failed:", error);
+                return null;
+            }
+        }
+
+        async function fetchBackupHint(word) {
+            try {
+                const backupHintResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                const backupHintData = await backupHintResponse.json();
+                if (backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions) {
+                    return backupHintData[0].meanings[0].definitions[0].definition;
+                } else {
+                    return "No backup hints available";
+                }
+            } catch (error) {
+                return "No backup hints available";
+            }
+        }
+
+        async function startGame(players) {
+            document.getElementById("title-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+            showHint = document.getElementById("showHint").checked;
+
+            if (players === 1) {
+                word = await fetchWordAndHint();
+                if (!word) {
+                    alert("Failed to fetch a word. Please try again.");
+                    document.getElementById("title-screen").style.display = "flex";
+                    document.getElementById("game-screen").style.display = "none";
+                    return;
+                }
+            } else {
+                word = prompt("Player 1, input the word (no spaces):").toLowerCase();
+                if (!word || word.includes(" ")) {
+                    alert("Invalid input. Please enter a word without spaces.");
+                    document.getElementById("title-screen").style.display = "flex";
+                    document.getElementById("game-screen").style.display = "none";
+                    return;
+                }
+                hint = prompt("Provide a hint for Player 2:");
+            }
+
+            guessed = Array(word.length).fill("_");
+            wrongGuesses = [];
+            attempts = 0;
+            updateDisplay();
+            drawHangman();
+        }
+
+        function guessLetter() {
+            const letterInput = document.getElementById("letter");
+            const letter = letterInput.value.toLowerCase();
+            letterInput.value = "";
+
+            if (!letter || wrongGuesses.includes(letter) || guessed.includes(letter) || !/^[a-z]$/.test(letter)) return;
+
+            if (word.includes(letter)) {
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) {
+                        guessed[i] = letter;
+                    }
+                }
+                if (!guessed.includes("_")) {
+                    document.querySelector(".win-message").textContent = "Congratulations! You won!";
+                    endGame(true);
+                }
+            } else {
+                wrongGuesses.push(letter);
+                attempts++;
+                drawHangman();
+                if (attempts >= maxAttempts) {
+                    document.querySelector(".win-message").textContent = "HANGED!";
+                    endGame(false);
+                }
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById("word-display").textContent = guessed.join(" ");
+            document.getElementById("hint-display").textContent = showHint ? `Hint: ${hint}` : "";
+            document.getElementById("wrong-guesses").textContent = `Wrong Letters: ${wrongGuesses.join(", ")}`;
+        }
+
+        function drawHangman() {
+            const hangmanDiv = document.getElementById("hangman");
+            const hangmanStages = [
+                `
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+========`
+            ];
+            hangmanDiv.textContent = hangmanStages[attempts];
+        }
+
+        function endGame(win) {
+            document.querySelector(".end-game-content").style.display = "block";
+            document.getElementById("letter").style.display = "none";
+            document.querySelector("button").style.display = "none";
+            document.getElementById("wrong-guesses").style.display = "none";
+            document.getElementById("hint-display").style.display = "none";
+            document.querySelector(".end-game-buttons").innerHTML = win ? `<button class="try-again" onclick="resetGame()">Play Again?</button><button class="quit" onclick="window.close()">Quit</button>` : `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
+        }
+
+        function resetGame() {
+            document.querySelector(".end-game-content").style.display = "none";
+            document.getElementById("letter").style.display = "inline-block";
+            document.querySelector("button").style.display = "inline-block";
+            document.getElementById("wrong-guesses").style.display = "block";
+            document.getElementById("hint-display").style.display = "block";
+            startGame(1);
+        }
     </script>
 </body>
 </html>
