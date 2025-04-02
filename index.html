@@ -76,7 +76,7 @@
         #word-display {
             font-size: 3em;
             margin-bottom: 30px;
-            letter-spacing: 0.5em; /* Adjusted letter-spacing */
+            letter-spacing: 0.5em;
         }
         #hint-display {
             font-style: italic;
@@ -173,7 +173,7 @@
     </div>
     <div id="game-screen">
         <div id="hangman-container">
-            <pre id="hangman"></pre>
+            <div id="hangman"></div>
         </div>
         <div id="word-display"></div>
         <div id="hint-display"></div>
@@ -185,7 +185,7 @@
             <div class="end-game-buttons"></div>
         </div>
     </div>
-    
+
     <script>
         let word = "";
         let guessed = [];
@@ -303,72 +303,27 @@
         }
 
         function updateDisplay() {
-            document.getElementById("word-display").textContent = guessed.join(" ");
-            document.getElementById("hint-display").textContent = showHint ? `Hint: ${hint}` : "";
-            document.getElementById("wrong-guesses").textContent = `Wrong Letters: ${wrongGuesses.join(", ")}`;
+          let displayedWord = '';
+          for (let i = 0; i < guessed.length; i++) {
+            displayedWord += `<span>${guessed[i]} </span>`;
+          }
+          document.getElementById('word-display').innerHTML = displayedWord;
+          document.getElementById("hint-display").textContent = showHint ? `Hint: ${hint}` : "";
+          document.getElementById("wrong-guesses").textContent = `Wrong Letters: ${wrongGuesses.join(", ")}`;
         }
 
         function drawHangman() {
             const hangmanDiv = document.getElementById("hangman");
             const hangmanStages = [
-                `
-  +---+
-  |   |
-      |
-      |
-      |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
-      |
-      |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
-  |   |
-      |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
- /|   |
-      |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
- /|\\  |
-      |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
- /|\\  |
- /    |
-      |
-========`,
-                `
-  +---+
-  |   |
-  O   |
- /|\\  |
- / \\  |
-      |
-========`
+                `<span>  +---+</span><br><span>  |   |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span>  |   |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|   |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span> /    |</span><br><span>      |</span><br><span>========</span>`,
+                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span> / \\  |</span><br><span>      |</span><br><span>========</span>`
             ];
-            hangmanDiv.textContent = hangmanStages[attempts];
+            hangmanDiv.innerHTML = hangmanStages[attempts];
         }
 
         function endGame(win) {
@@ -391,4 +346,3 @@
     </script>
 </body>
 </html>
-```
