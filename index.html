@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hangman</title>
+    <title>Word Guess</title>
     <style>
         body {
             font-family: sans-serif;
@@ -13,10 +13,9 @@
             font-size: 2em;
             margin-bottom: 20px;
         }
-        #hangman {
-            font-size: 1.5em;
-            white-space: pre-line;
+        #incorrect-guesses {
             margin-bottom: 10px;
+            color: red;
         }
         .end-game-content {
             display: none;
@@ -29,9 +28,6 @@
             padding: 8px 15px;
             cursor: pointer;
         }
-        #wrong-guesses {
-            margin-bottom: 10px;
-        }
         #hint-display {
             margin-bottom: 10px;
             font-style: italic;
@@ -42,15 +38,14 @@
     </style>
 </head>
 <body>
-    <h1>Hangman</h1>
-    <div id="hangman"></div>
+    <h1>Word Guess</h1>
     <div id="word-display"></div>
     <div id="hint-display"></div>
+    <div id="incorrect-guesses"></div>
     <div>
         <input type="text" id="letter" maxlength="1">
         <button onclick="guessLetter()">Guess</button>
     </div>
-    <p id="wrong-guesses"></p>
     <div class="end-game-content">
         <p class="win-message"></p>
         <div class="end-game-buttons">
@@ -73,20 +68,19 @@
             { word: "elderberry", hint: "A dark purple berry used in jams and wines." }
         ];
 
-        function startGame(level) {
+        function startGame() {
             const randomIndex = Math.floor(Math.random() * wordList.length);
             word = wordList[randomIndex].word;
             hint = wordList[randomIndex].hint;
             guessed = Array(word.length).fill("_");
             wrongGuesses = [];
             attempts = 0;
-            showHint = false; // Reset hint visibility on new game
+            showHint = false;
             updateDisplay();
-            drawHangman();
         }
 
         // Start the game when the page loads
-        startGame(1);
+        startGame();
 
         function guessLetter() {
             const letterInput = document.getElementById("letter");
@@ -108,9 +102,9 @@
             } else {
                 wrongGuesses.push(letter);
                 attempts++;
-                drawHangman();
+                updateDisplay();
                 if (attempts >= maxAttempts) {
-                    document.querySelector(".win-message").textContent = "HANGED! The word was: " + word;
+                    document.querySelector(".win-message").textContent = "You ran out of guesses! The word was: " + word;
                     endGame(false);
                 }
             }
@@ -124,28 +118,14 @@
           }
           document.getElementById('word-display').innerHTML = displayedWord;
           document.getElementById("hint-display").textContent = showHint ? `Hint: ${hint}` : "";
-          document.getElementById("wrong-guesses").textContent = `Wrong Letters: ${wrongGuesses.join(", ")}`;
-        }
-
-        function drawHangman() {
-            const hangmanDiv = document.getElementById("hangman");
-            const hangmanStages = [
-                `<span>  +---+</span><br><span>  |   |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span>      |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span>  |   |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|   |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span>      |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span> /    |</span><br><span>      |</span><br><span>========</span>`,
-                `<span>  +---+</span><br><span>  |   |</span><br><span>  O   |</span><br><span> /|\\  |</span><br><span> / \\  |</span><br><span>      |</span><br><span>========</span>`
-            ];
-            hangmanDiv.innerHTML = hangmanStages[attempts];
+          document.getElementById("incorrect-guesses").textContent = `Incorrect Guesses: ${wrongGuesses.join(", ")} (Attempts: ${attempts}/${maxAttempts})`;
         }
 
         function endGame(win) {
             document.querySelector(".end-game-content").style.display = "block";
             document.getElementById("letter").style.display = "none";
             document.querySelector("button").style.display = "none";
-            document.getElementById("wrong-guesses").style.display = "none";
+            document.getElementById("incorrect-guesses").style.display = "none";
             document.getElementById("hint-display").style.display = "none";
             document.querySelector(".end-game-buttons").innerHTML = `<button class="try-again" onclick="resetGame()">Play Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
         }
@@ -154,9 +134,9 @@
             document.querySelector(".end-game-content").style.display = "none";
             document.getElementById("letter").style.display = "inline-block";
             document.querySelector("button").style.display = "inline-block";
-            document.getElementById("wrong-guesses").style.display = "block";
+            document.getElementById("incorrect-guesses").style.display = "block";
             document.getElementById("hint-display").style.display = "block";
-            startGame(1);
+            startGame();
         }
     </script>
 </body>
