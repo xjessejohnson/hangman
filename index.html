@@ -1,189 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangman</title>
     <style>
         body {
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            background-color: black;
-            color: #00FF00;
-            margin: 0;
-            padding: 0;
-            overflow: auto;
-        }
-        #title-screen {
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            animation: fadeIn 2s ease-out;
-        }
-        #title-screen h1 {
-            font-size: 5.5em;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px #00FF00;
-            letter-spacing: 12px;
-            animation: pulse 2.2s infinite ease-in-out;
-        }
-        #title-screen small {
-            font-size: 1em;
-            margin-bottom: 30px;
-            color: #66FF66;
-        }
-        #title-screen button {
-            padding: 22px 45px;
-            font-size: 1.4em;
-            background: linear-gradient(135deg, #00B300, #005700);
-            color: #00FF00;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.5);
-        }
-        #title-screen button:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.7);
-        }
-        #game-screen {
-            display: none;
-            padding: 50px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.5);
-            margin: 40px auto;
-            width: 90%;
-            max-width: 800px;
-        }
-        #hangman-container {
-            position: relative;
-            height: 800px;
-            margin-bottom: 25px;
-        }
-        #hangman {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) scale(4);
-            font-size: 0.7em;
-            color: #00FF00;
-            white-space: pre-wrap;
         }
         #word-display {
-            font-size: 3em;
-            margin-bottom: 30px;
-            letter-spacing: 0.5em;
+            font-size: 2em;
+            margin-bottom: 20px;
         }
-        #hint-display {
-            font-style: italic;
-            color: #66FF66;
-            margin-bottom: 35px;
-        }
-        #letter {
-            padding: 10px;
-            font-size: 1.3em;
-            width: 70px;
-            border: 2px solid #00FF00;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            color: #00FF00;
-            caret-color: yellow;
-            margin-top: 15px;
-        }
-        button {
-            padding: 18px 35px;
-            font-size: 1.3em;
-            background: #005700;
-            color: #00FF00;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.3);
-        }
-        button:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4);
-        }
-        #wrong-guesses {
-            color: #00FF00;
-            margin-top: 30px;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        .win-message {
-            font-size: 3em;
-            color: red;
-            font-weight: bold;
-        }
-        .end-game-buttons button {
-            padding: 18px 35px;
-            font-size: 1.3em;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-            box-shadow: 0 6px 18px rgba(0, 255, 0, 0.3);
-            margin: 10px;
-        }
-        .end-game-buttons button:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4);
-        }
-        .try-again {
-            background: #007700;
-            color: #00FF00;
-            border: none;
-        }
-        .quit {
-            background: red;
-            color: white;
-            border: none;
-        }
-        #title-screen small.copyright {
-            font-size: 0.9em;
-            margin-top: 60px;
+        #hangman {
+            font-size: 1.5em;
+            white-space: pre-line;
+            margin-bottom: 10px;
         }
         .end-game-content {
             display: none;
+            font-size: 1.2em;
+            margin-top: 20px;
+            text-align: center;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .end-game-buttons button {
+            margin: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.06); }
+        #wrong-guesses {
+            margin-bottom: 10px;
+        }
+        #hint-display {
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        span {
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="title-screen">
-        <h1>Hangman</h1>
-        <small>Developed by Jesse Johnson</small>
-        <button onclick="startGame(1)">1 Player</button>
-        <button onclick="startGame(2)">2 Players</button>
-        <div class="hint-checkbox">
-            <input type="checkbox" id="showHint" checked> Show Hint
-        </div>
-        <small class="copyright">© 2025 Jesse Johnson. All Rights Reserved.</small>
-    </div>
-    <div id="game-screen">
-        <div id="hangman-container">
-            <div id="hangman"></div>
-        </div>
-        <div id="word-display"></div>
-        <div id="hint-display"></div>
+    <h1>Hangman</h1>
+    <div id="hangman"></div>
+    <div id="word-display"></div>
+    <div id="hint-display"></div>
+    <div>
         <input type="text" id="letter" maxlength="1">
-        <button onclick="guessLetter()">Guess Letter</button>
-        <div id="wrong-guesses"></div>
-        <div class="end-game-content">
-            <div class="win-message"></div>
-            <div class="end-game-buttons"></div>
-        </div>
+        <button onclick="guessLetter()">Guess</button>
+    </div>
+    <p id="wrong-guesses"></p>
+    <div class="end-game-content">
+        <p class="win-message"></p>
+        <div class="end-game-buttons">
+            </div>
     </div>
 
     <script>
@@ -193,85 +64,29 @@
         let attempts = 0;
         const maxAttempts = 6;
         let hint = "";
-        let showHint = true;
+        let showHint = false;
+        const wordList = [
+            { word: "apple", hint: "A round fruit often red or green." },
+            { word: "banana", hint: "A long curved yellow fruit." },
+            { word: "cherry", hint: "A small, round stone fruit, typically red." },
+            { word: "date", hint: "A sweet, dark brown fruit of the date palm." },
+            { word: "elderberry", hint: "A dark purple berry used in jams and wines." }
+        ];
 
-        async function fetchWordAndHint() {
-            try {
-                const response = await fetch('https://random-word-api.herokuapp.com/word?number=1');
-                const data = await response.json();
-                const randomWord = data[0];
-
-                const hintResponse = await fetch(`https://api.datamuse.com/words?ml=${randomWord}`);
-                const hintData = await hintResponse.json();
-                if (hintData.length > 0) {
-                    hint = hintData[0].word;
-                } else {
-                    hint = await fetchBackupHint(randomWord);
-                }
-
-                return randomWord;
-            } catch (error) {
-                console.error("Error fetching word and hint:", error);
-                return await fetchBackupWordAndHint();
-            }
-        }
-
-        async function fetchBackupWordAndHint() {
-            try {
-                const backupWords = ["python", "programming", "algorithm", "hangman", "computer", "developer", "function", "variable", "iteration", "recursion"];
-                const randomWord = backupWords[Math.floor(Math.random() * backupWords.length)];
-                hint = await fetchBackupHint(randomWord);
-                return randomWord;
-            } catch (error) {
-                console.error("Backup word fetch failed:", error);
-                return null;
-            }
-        }
-
-        async function fetchBackupHint(word) {
-            try {
-                const backupHintResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-                const backupHintData = await backupHintResponse.json();
-                if (backupHintData && backupHintData[0].meanings && backupHintData[0].meanings[0].definitions) {
-                    return backupHintData[0].meanings[0].definitions[0].definition;
-                } else {
-                    return "No backup hints available";
-                }
-            } catch (error) {
-                return "No backup hints available";
-            }
-        }
-
-        async function startGame(players) {
-            document.getElementById("title-screen").style.display = "none";
-            document.getElementById("game-screen").style.display = "block";
-            showHint = document.getElementById("showHint").checked;
-
-            if (players === 1) {
-                word = await fetchWordAndHint();
-                if (!word) {
-                    alert("Failed to fetch a word. Please try again.");
-                    document.getElementById("title-screen").style.display = "flex";
-                    document.getElementById("game-screen").style.display = "none";
-                    return;
-                }
-            } else {
-                word = prompt("Player 1, input the word (no spaces):").toLowerCase();
-                if (!word || word.includes(" ")) {
-                    alert("Invalid input. Please enter a word without spaces.");
-                    document.getElementById("title-screen").style.display = "flex";
-                    document.getElementById("game-screen").style.display = "none";
-                    return;
-                }
-                hint = prompt("Provide a hint for Player 2:");
-            }
-
+        function startGame(level) {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            word = wordList[randomIndex].word;
+            hint = wordList[randomIndex].hint;
             guessed = Array(word.length).fill("_");
             wrongGuesses = [];
             attempts = 0;
+            showHint = false; // Reset hint visibility on new game
             updateDisplay();
             drawHangman();
         }
+
+        // Start the game when the page loads
+        startGame(1);
 
         function guessLetter() {
             const letterInput = document.getElementById("letter");
@@ -295,7 +110,7 @@
                 attempts++;
                 drawHangman();
                 if (attempts >= maxAttempts) {
-                    document.querySelector(".win-message").textContent = "HANGED!";
+                    document.querySelector(".win-message").textContent = "HANGED! The word was: " + word;
                     endGame(false);
                 }
             }
@@ -305,7 +120,7 @@
         function updateDisplay() {
           let displayedWord = '';
           for (let i = 0; i < guessed.length; i++) {
-            displayedWord += `<span>${guessed[i]} </span>`;
+            displayedWord += `<span>${guessed[i]}</span>`;
           }
           document.getElementById('word-display').innerHTML = displayedWord;
           document.getElementById("hint-display").textContent = showHint ? `Hint: ${hint}` : "";
@@ -332,7 +147,7 @@
             document.querySelector("button").style.display = "none";
             document.getElementById("wrong-guesses").style.display = "none";
             document.getElementById("hint-display").style.display = "none";
-            document.querySelector(".end-game-buttons").innerHTML = win ? `<button class="try-again" onclick="resetGame()">Play Again?</button><button class="quit" onclick="window.close()">Quit</button>` : `<button class="try-again" onclick="resetGame()">Try Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
+            document.querySelector(".end-game-buttons").innerHTML = `<button class="try-again" onclick="resetGame()">Play Again?</button><button class="quit" onclick="window.close()">Quit</button>`;
         }
 
         function resetGame() {
